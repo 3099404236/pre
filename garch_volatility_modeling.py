@@ -404,7 +404,8 @@ for idx, model_name in enumerate(forecasts.keys()):
     pred_valid = predicted[valid_idx]
     true_valid = true_volatility[valid_idx]
 
-    axes[idx].scatter(true_valid, pred_valid, alpha=0.6, s=30, color=colors[idx], edgecolor='black', linewidth=0.5)
+    # X-axis: Predicted, Y-axis: True (standard convention)
+    axes[idx].scatter(pred_valid, true_valid, alpha=0.6, s=30, color=colors[idx], edgecolor='black', linewidth=0.5)
 
     # Determine axis range (use same range for both axes to make 45-degree line visible)
     min_val = min(true_valid.min(), pred_valid.min())
@@ -423,14 +424,15 @@ for idx, model_name in enumerate(forecasts.keys()):
     axes[idx].plot([axis_min, axis_max], [axis_min, axis_max], 'r--', linewidth=2, label='Perfect Prediction (y=x)', zorder=1)
 
     # Add regression line - draw across entire axis range
-    z = np.polyfit(true_valid, pred_valid, 1)
+    # Now: true = slope * pred + intercept
+    z = np.polyfit(pred_valid, true_valid, 1)
     p = np.poly1d(z)
     x_line = np.array([axis_min, axis_max])
     y_line = p(x_line)
     axes[idx].plot(x_line, y_line, 'g-', linewidth=2, alpha=0.7, label=f'Fit: y={z[0]:.2f}x+{z[1]:.2f}', zorder=2)
 
-    axes[idx].set_xlabel('True IV (%)', fontsize=11, fontweight='bold')
-    axes[idx].set_ylabel('Predicted Volatility (%)', fontsize=11, fontweight='bold')
+    axes[idx].set_xlabel('Predicted Volatility (%)', fontsize=11, fontweight='bold')
+    axes[idx].set_ylabel('True IV (%)', fontsize=11, fontweight='bold')
     axes[idx].set_title(f'{model_name}\n(R² = {performance[model_name]["R²"]:.3f})',
                         fontsize=11, fontweight='bold')
     axes[idx].legend(loc='best', fontsize=9)
