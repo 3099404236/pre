@@ -1,6 +1,6 @@
 # GARCH Volatility Modeling Experiment Report
 
-**Date:** 2025-11-12 04:33:48
+**Date:** 2025-11-12 05:12:10
 **Target Asset:** Copper Futures (SHFE)
 **Experiment Objective:** Model and forecast volatility using GARCH-class models, validated against option-implied volatility
 
@@ -17,7 +17,7 @@ The models are estimated on in-sample data and evaluated on out-of-sample one-st
 
 ### Key Findings:
 - **Best Model (RMSE):** Constant-GARCH
-- **Best Model (MAE):** AR-GARCH
+- **Best Model (MAE):** Constant-GARCH
 - **Best Model (R²):** Constant-GARCH
 
 ---
@@ -142,7 +142,7 @@ Distribution:                  Normal   AIC:                           3815.45
 Method:            Maximum Likelihood   BIC:                           3841.58
                                         No. Observations:                 1374
 Date:                Wed, Nov 12 2025   Df Residuals:                     1372
-Time:                        04:33:17   Df Model:                            2
+Time:                        05:11:40   Df Model:                            2
                                   Mean Model                                 
 =============================================================================
                  coef    std err          t      P>|t|       95.0% Conf. Int.
@@ -169,7 +169,7 @@ Distribution:                  Normal   AIC:                           3817.33
 Method:            Maximum Likelihood   BIC:                           3838.24
                                         No. Observations:                 1375
 Date:                Wed, Nov 12 2025   Df Residuals:                     1374
-Time:                        04:33:17   Df Model:                            1
+Time:                        05:11:40   Df Model:                            1
                                   Mean Model                                 
 =============================================================================
                  coef    std err          t      P>|t|       95.0% Conf. Int.
@@ -196,7 +196,7 @@ Distribution:                  Normal   AIC:                           3815.28
 Method:            Maximum Likelihood   BIC:                           3846.63
                                         No. Observations:                 1374
 Date:                Wed, Nov 12 2025   Df Residuals:                     1372
-Time:                        04:33:17   Df Model:                            2
+Time:                        05:11:40   Df Model:                            2
                                   Mean Model                                 
 =============================================================================
                  coef    std err          t      P>|t|       95.0% Conf. Int.
@@ -216,36 +216,36 @@ Returns[1]    -0.0466  2.931e-02     -1.589      0.112    [ -0.104,1.088e-02]
 
 ### 5.1 Performance Metrics Comparison
 
-|                |     MAE |    RMSE |      R² |   MAPE (%) |
-|:---------------|--------:|--------:|--------:|-----------:|
-| AR-GARCH       | 15.1406 | 16.228  | -195674 |    10376   |
-| Constant-GARCH | 15.153  | 16.224  | -195579 |    10386.9 |
-| GJR-GARCH      | 15.1768 | 16.3551 | -198752 |    10397   |
+|                |     MAE |    RMSE |        R² |   MAPE (%) |
+|:---------------|--------:|--------:|----------:|-----------:|
+| AR-GARCH       | 2.50508 | 4.28357 | -0.363389 |    15.69   |
+| Constant-GARCH | 2.48965 | 4.24752 | -0.340534 |    15.6128 |
+| GJR-GARCH      | 2.67376 | 4.58547 | -0.562339 |    16.7108 |
 
 ### 5.2 Interpretation
 
 **By RMSE (Lower is better):**
-1. **Constant-GARCH**: 16.2240
-2. **AR-GARCH**: 16.2280
-3. **GJR-GARCH**: 16.3551
+1. **Constant-GARCH**: 4.2475
+2. **AR-GARCH**: 4.2836
+3. **GJR-GARCH**: 4.5855
 
 **By R² (Higher is better):**
-1. **Constant-GARCH**: -195579.3518
-2. **AR-GARCH**: -195674.0288
-3. **GJR-GARCH**: -198752.3858
+1. **Constant-GARCH**: -0.3405
+2. **AR-GARCH**: -0.3634
+3. **GJR-GARCH**: -0.5623
 
 ### 5.3 Key Observations
 
 1. **Overall Performance:** All three models capture the general volatility trends, as evidenced by varying R² values.
 
-2. **Best Performing Model:** Constant-GARCH achieves the lowest RMSE (16.2240), indicating superior forecast accuracy.
+2. **Best Performing Model:** Constant-GARCH achieves the lowest RMSE (4.2475), indicating superior forecast accuracy.
 
 3. **Model Differences:**
    - The RMSE differences suggest moderate variation in model performance.
-   - R² values range from -198752.3858 to -195579.3518, showing moderate explanatory power.
+   - R² values range from -0.5623 to -0.3405, showing moderate explanatory power.
 
 4. **Practical Implications:**
-   - MAPE values indicate average forecast errors of 10376.00% to 10396.96%
+   - MAPE values indicate average forecast errors of 15.61% to 16.71%
    - Forecast accuracy could be improved for practical applications.
 
 ---
@@ -366,9 +366,9 @@ Scatter plots showing the relationship between predicted volatility and true IV 
 
 | Model | MAE | RMSE | R² | MAPE (%) | Rank (RMSE) |
 |-------|-----|------|----|-----------| ------------|
-| AR-GARCH | 15.1406 | 16.2280 | -195674.0288 | 10376.00 | 2 |
-| Constant-GARCH | 15.1530 | 16.2240 | -195579.3518 | 10386.92 | 1 |
-| GJR-GARCH | 15.1768 | 16.3551 | -198752.3858 | 10396.96 | 3 |
+| AR-GARCH | 2.5051 | 4.2836 | -0.3634 | 15.69 | 2 |
+| Constant-GARCH | 2.4897 | 4.2475 | -0.3405 | 15.61 | 1 |
+| GJR-GARCH | 2.6738 | 4.5855 | -0.5623 | 16.71 | 3 |
 
 ---
 

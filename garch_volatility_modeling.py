@@ -191,7 +191,8 @@ for model_name in forecasts.keys():
 print("\n[Step 5] Evaluating forecast performance...")
 
 # True volatility: IV from options
-true_volatility = test_data['IV'].values
+# Convert IV from decimal (0.15 = 15%) to percentage (15 = 15%) to match GARCH forecasts
+true_volatility = test_data['IV'].values * 100
 
 # Calculate performance metrics
 performance = {}
