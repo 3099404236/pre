@@ -109,14 +109,13 @@ print(model_results['AR-GARCH'].summary())
 print("\n--- GARCH-M Model ---")
 models['GARCH-M'] = arch_model(
     train_data['Returns'],
-    mean='AR',
+    mean='GARCH',  # GARCH-in-Mean: volatility enters the mean equation
     lags=1,
     vol='GARCH',
     p=1,
     q=1,
     rescale=False
 )
-# Note: arch package doesn't directly support GARCH-M, we'll use standard GARCH as approximation
 model_results['GARCH-M'] = models['GARCH-M'].fit(disp='off', show_warning=False)
 print(model_results['GARCH-M'].summary())
 
@@ -158,7 +157,9 @@ for model_name in forecasts.keys():
         # Re-estimate model
         if model_name == 'GJR-GARCH':
             model = arch_model(current_train, mean='AR', lags=1, vol='GARCH', p=1, o=1, q=1, rescale=False)
-        else:
+        elif model_name == 'GARCH-M':
+            model = arch_model(current_train, mean='GARCH', lags=1, vol='GARCH', p=1, q=1, rescale=False)
+        else:  # AR-GARCH
             model = arch_model(current_train, mean='AR', lags=1, vol='GARCH', p=1, q=1, rescale=False)
 
         try:
