@@ -76,12 +76,12 @@ print(f"Out-of-sample observations: {len(test_data)}")
 # ============================================================================
 print("\n[Step 2] Descriptive statistics of returns...")
 
-stats = pd.DataFrame({
+desc_stats = pd.DataFrame({
     'Full Sample': df_cu['Returns'].describe(),
     'In-Sample': train_data['Returns'].describe(),
     'Out-of-Sample': test_data['Returns'].describe()
 })
-print(stats)
+print(desc_stats)
 
 # ============================================================================
 # Step 3: Model Estimation (In-Sample)
@@ -105,19 +105,18 @@ models['AR-GARCH'] = arch_model(
 model_results['AR-GARCH'] = models['AR-GARCH'].fit(disp='off', show_warning=False)
 print(model_results['AR-GARCH'].summary())
 
-# Model 2: GARCH-M (GARCH-in-Mean)
-print("\n--- GARCH-M Model ---")
-models['GARCH-M'] = arch_model(
+# Model 2: Constant-GARCH (Standard GARCH with constant mean)
+print("\n--- Constant-GARCH Model ---")
+models['Constant-GARCH'] = arch_model(
     train_data['Returns'],
-    mean='GARCH',  # GARCH-in-Mean: volatility enters the mean equation
-    lags=1,
+    mean='Constant',  # Constant mean (standard GARCH specification)
     vol='GARCH',
     p=1,
     q=1,
     rescale=False
 )
-model_results['GARCH-M'] = models['GARCH-M'].fit(disp='off', show_warning=False)
-print(model_results['GARCH-M'].summary())
+model_results['Constant-GARCH'] = models['Constant-GARCH'].fit(disp='off', show_warning=False)
+print(model_results['Constant-GARCH'].summary())
 
 # Model 3: GJR-GARCH (Threshold GARCH)
 print("\n--- GJR-GARCH Model ---")
@@ -142,7 +141,7 @@ print("\n[Step 4] Performing one-step-ahead out-of-sample forecasting...")
 # Initialize forecast storage
 forecasts = {
     'AR-GARCH': [],
-    'GARCH-M': [],
+    'Constant-GARCH': [],
     'GJR-GARCH': []
 }
 
@@ -157,8 +156,8 @@ for model_name in forecasts.keys():
         # Re-estimate model
         if model_name == 'GJR-GARCH':
             model = arch_model(current_train, mean='AR', lags=1, vol='GARCH', p=1, o=1, q=1, rescale=False)
-        elif model_name == 'GARCH-M':
-            model = arch_model(current_train, mean='GARCH', lags=1, vol='GARCH', p=1, q=1, rescale=False)
+        elif model_name == 'Constant-GARCH':
+            model = arch_model(current_train, mean='Constant', vol='GARCH', p=1, q=1, rescale=False)
         else:  # AR-GARCH
             model = arch_model(current_train, mean='AR', lags=1, vol='GARCH', p=1, q=1, rescale=False)
 
@@ -444,9 +443,9 @@ report_content = f"""# GARCH Volatility Modeling Experiment Report
 ## 1. Executive Summary
 
 This experiment implements and compares three GARCH-class models for volatility forecasting of copper futures:
-- **AR(1)-GARCH(1,1)**: Standard GARCH with AR(1) mean equation
-- **GARCH-M**: GARCH-in-Mean model
-- **GJR-GARCH**: Threshold GARCH capturing asymmetric effects
+- **AR(1)-GARCH(1,1)**: GARCH with AR(1) mean equation
+- **Constant-GARCH(1,1)**: Standard GARCH with constant mean
+- **GJR-GARCH(1,1)**: Threshold GARCH capturing asymmetric effects
 
 The models are estimated on in-sample data and evaluated on out-of-sample one-step-ahead forecasts. **Implied Volatility (IV) from at-the-money copper options serves as the true volatility benchmark**, following the experimental design requirement.
 
@@ -474,7 +473,7 @@ The models are estimated on in-sample data and evaluated on out-of-sample one-st
 
 **Daily Returns (%):**
 
-{stats.to_markdown()}
+{desc_stats.to_markdown()}
 
 **Key Observations:**
 - Mean return: {df_cu['Returns'].mean():.4f}%
@@ -504,11 +503,11 @@ r_t = μ + φ₁·r_(t-1) + ε_t
 
 This is the baseline GARCH model with first-order autoregression in the mean.
 
-#### Model 2: GARCH-M
+#### Model 2: Constant-GARCH(1,1)
 
 **Mean Equation:**
 ```
-r_t = μ + λ·σ²_t + φ₁·r_(t-1) + ε_t
+r_t = μ + ε_t
 ```
 
 **Variance Equation:**
@@ -516,7 +515,7 @@ r_t = μ + λ·σ²_t + φ₁·r_(t-1) + ε_t
 σ²_t = ω + α₁·ε²_(t-1) + β₁·σ²_(t-1)
 ```
 
-GARCH-M includes volatility in the mean equation, capturing risk-return tradeoff.
+This is the standard GARCH(1,1) model with constant mean, the most widely used volatility model.
 
 #### Model 3: GJR-GARCH
 
@@ -563,11 +562,11 @@ Models are evaluated using:
 ...
 ```
 
-### 4.2 GARCH-M Model
+### 4.2 Constant-GARCH Model
 
 **Parameter Estimates:**
 ```
-{model_results['GARCH-M'].summary().as_text()[:1500]}
+{model_results['Constant-GARCH'].summary().as_text()[:1500]}
 ...
 ```
 
@@ -663,7 +662,7 @@ Scatter plots showing the relationship between predicted volatility and true IV 
 
 2. **Best Model:** {best_model_rmse} demonstrates superior forecasting performance based on RMSE, making it the recommended model for copper futures volatility forecasting.
 
-3. **GARCH vs. Extensions:** {'The extended models (GARCH-M/GJR-GARCH) show improvement over standard GARCH' if list(perf_df.sort_values('RMSE').index)[0] != 'AR-GARCH' else 'The standard AR-GARCH performs competitively with extended models'}, suggesting {'that risk premium and asymmetric effects are important' if list(perf_df.sort_values('RMSE').index)[0] != 'AR-GARCH' else 'that simplicity may be preferred for this dataset'}.
+3. **Model Comparison:** {'The extended models show improvement over standard specifications' if list(perf_df.sort_values('RMSE').index)[0] == 'GJR-GARCH' else 'Different mean specifications (AR vs. Constant) and asymmetric effects (GJR) show varying performance'}, suggesting {'that asymmetric volatility effects are important for copper futures' if list(perf_df.sort_values('RMSE').index)[0] == 'GJR-GARCH' else 'that model selection depends on the specific forecasting objectives'}.
 
 4. **IV as Benchmark:** Using option-implied volatility as the true volatility benchmark provides a market-based validation superior to historical volatility measures.
 
@@ -751,7 +750,7 @@ forecast_df = pd.DataFrame({
     'Date': test_data.index,
     'True_IV': true_volatility,
     'AR-GARCH_Forecast': forecasts['AR-GARCH'],
-    'GARCH-M_Forecast': forecasts['GARCH-M'],
+    'Constant-GARCH_Forecast': forecasts['Constant-GARCH'],
     'GJR-GARCH_Forecast': forecasts['GJR-GARCH']
 })
 forecast_df.to_csv('volatility_forecasts.csv', index=False)
