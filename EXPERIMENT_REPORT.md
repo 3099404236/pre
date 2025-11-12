@@ -1,6 +1,6 @@
 # GARCH Volatility Modeling Experiment Report
 
-**Date:** 2025-11-12 05:12:10
+**Date:** 2025-11-12 09:47:15
 **Target Asset:** Copper Futures (SHFE)
 **Experiment Objective:** Model and forecast volatility using GARCH-class models, validated against option-implied volatility
 
@@ -142,7 +142,7 @@ Distribution:                  Normal   AIC:                           3815.45
 Method:            Maximum Likelihood   BIC:                           3841.58
                                         No. Observations:                 1374
 Date:                Wed, Nov 12 2025   Df Residuals:                     1372
-Time:                        05:11:40   Df Model:                            2
+Time:                        09:46:46   Df Model:                            2
                                   Mean Model                                 
 =============================================================================
                  coef    std err          t      P>|t|       95.0% Conf. Int.
@@ -169,7 +169,7 @@ Distribution:                  Normal   AIC:                           3817.33
 Method:            Maximum Likelihood   BIC:                           3838.24
                                         No. Observations:                 1375
 Date:                Wed, Nov 12 2025   Df Residuals:                     1374
-Time:                        05:11:40   Df Model:                            1
+Time:                        09:46:46   Df Model:                            1
                                   Mean Model                                 
 =============================================================================
                  coef    std err          t      P>|t|       95.0% Conf. Int.
@@ -196,7 +196,7 @@ Distribution:                  Normal   AIC:                           3815.28
 Method:            Maximum Likelihood   BIC:                           3846.63
                                         No. Observations:                 1374
 Date:                Wed, Nov 12 2025   Df Residuals:                     1372
-Time:                        05:11:40   Df Model:                            2
+Time:                        09:46:46   Df Model:                            2
                                   Mean Model                                 
 =============================================================================
                  coef    std err          t      P>|t|       95.0% Conf. Int.

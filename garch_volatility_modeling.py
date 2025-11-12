@@ -406,15 +406,28 @@ for idx, model_name in enumerate(forecasts.keys()):
 
     axes[idx].scatter(true_valid, pred_valid, alpha=0.6, s=30, color=colors[idx], edgecolor='black', linewidth=0.5)
 
-    # Add diagonal line (perfect prediction)
+    # Determine axis range (use same range for both axes to make 45-degree line visible)
     min_val = min(true_valid.min(), pred_valid.min())
     max_val = max(true_valid.max(), pred_valid.max())
-    axes[idx].plot([min_val, max_val], [min_val, max_val], 'r--', linewidth=2, label='Perfect Prediction')
 
-    # Add regression line
+    # Add some padding
+    padding = (max_val - min_val) * 0.05
+    axis_min = min_val - padding
+    axis_max = max_val + padding
+
+    # Set equal axis limits
+    axes[idx].set_xlim(axis_min, axis_max)
+    axes[idx].set_ylim(axis_min, axis_max)
+
+    # Add diagonal line (perfect prediction) - 45 degree line
+    axes[idx].plot([axis_min, axis_max], [axis_min, axis_max], 'r--', linewidth=2, label='Perfect Prediction (y=x)', zorder=1)
+
+    # Add regression line - draw across entire axis range
     z = np.polyfit(true_valid, pred_valid, 1)
     p = np.poly1d(z)
-    axes[idx].plot(true_valid, p(true_valid), 'g-', linewidth=2, alpha=0.7, label=f'Fit: y={z[0]:.2f}x+{z[1]:.2f}')
+    x_line = np.array([axis_min, axis_max])
+    y_line = p(x_line)
+    axes[idx].plot(x_line, y_line, 'g-', linewidth=2, alpha=0.7, label=f'Fit: y={z[0]:.2f}x+{z[1]:.2f}', zorder=2)
 
     axes[idx].set_xlabel('True IV (%)', fontsize=11, fontweight='bold')
     axes[idx].set_ylabel('Predicted Volatility (%)', fontsize=11, fontweight='bold')
@@ -422,6 +435,9 @@ for idx, model_name in enumerate(forecasts.keys()):
                         fontsize=11, fontweight='bold')
     axes[idx].legend(loc='best', fontsize=9)
     axes[idx].grid(True, alpha=0.3)
+
+    # Set aspect ratio to equal for proper 45-degree line visualization
+    axes[idx].set_aspect('equal', adjustable='box')
 
 plt.tight_layout()
 plt.savefig('figures/08_predicted_vs_true.png', dpi=300, bbox_inches='tight')
